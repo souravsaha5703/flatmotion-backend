@@ -1,0 +1,4 @@
+# This file is used internally by FFMPEG.
+file 'file:D:/text2animation/outputs/videos/4210972a9d114654bc601f91ebdb0064/2160p60/partial_movie_files/GreenSquareAnimation/1457378895_3373811227_3138066159.mp4'
+file 'file:D:/text2animation/outputs/videos/4210972a9d114654bc601f91ebdb0064/2160p60/partial_movie_files/GreenSquareAnimation/1993220219_665437209_3138066159.mp4'
+file 'file:D:/text2animation/outputs/videos/4210972a9d114654bc601f91ebdb0064/2160p60/partial_movie_files/GreenSquareAnimation/1993220219_2834709167_815170659.mp4'
