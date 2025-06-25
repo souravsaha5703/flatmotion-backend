@@ -1,4 +1,0 @@
-# This file is used internally by FFMPEG.
-file 'file:D:/text2animation/outputs/videos/10ab7f1f9d514b89b5b4b21375f82ecf/2160p60/partial_movie_files/GreenSquareRotation/1457378895_87577887_223132457.mp4'
-file 'file:D:/text2animation/outputs/videos/10ab7f1f9d514b89b5b4b21375f82ecf/2160p60/partial_movie_files/GreenSquareRotation/1993220219_2237973427_557880437.mp4'
-file 'file:D:/text2animation/outputs/videos/10ab7f1f9d514b89b5b4b21375f82ecf/2160p60/partial_movie_files/GreenSquareRotation/1993220219_2834709167_2984244526.mp4'

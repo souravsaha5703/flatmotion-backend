@@ -2,6 +2,19 @@ from uuid import uuid4
 import subprocess
 import os
 
+def calculate_max_tokens(prompt: str, base: int = 300, max_limit: int = 1000) -> int:
+    length = len(prompt.split())
+    
+    if length < 10:
+        return 300
+    elif length < 30:
+        return 500
+    elif length < 60:
+        return 700
+    else:
+        return min(max_limit, 900 + (length // 5))
+
+
 def save_script(script:str) -> str:
     script_id = uuid4().hex
     script_path = f"outputs/scripts/{script_id}.py"
