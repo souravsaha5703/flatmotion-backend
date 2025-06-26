@@ -3,9 +3,10 @@ from fastapi.responses import JSONResponse
 from models.prompt import PromptRequest
 from models.error_response import ErrorResponse
 from config import client
-from services.utils import save_script,get_video_url,render_video,calculate_max_tokens
+from services.utils import save_script,render_video,calculate_max_tokens,cleanup_temp_files
 from services.validation import validate_prompt
 from dotenv import load_dotenv
+from services.cloudinary_uploader import upload_video_to_cloudinary
 import os
 
 load_dotenv()
@@ -38,9 +39,11 @@ async def generate_animation(req:PromptRequest):
                     if script.startswith("python"):
                         script = script[len("python"):].strip()
                 script_path = save_script(script)
-                rendered_video = render_video(script_path)
-                video_path = get_video_url(rendered_video)
-                return video_path
+                rendered_video = render_video(script_path.script_path_final,script_path.script_id_final)
+                video_url = upload_video_to_cloudinary(rendered_video.video_path,rendered_video.video_id)
+                print(video_url)
+                cleanup_temp_files()
+                return video_url
             else:
                 return JSONResponse(
                     status_code=500,

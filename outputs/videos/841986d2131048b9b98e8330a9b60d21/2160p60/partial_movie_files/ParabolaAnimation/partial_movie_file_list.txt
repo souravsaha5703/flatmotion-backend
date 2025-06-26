@@ -1,6 +1,0 @@
-# This file is used internally by FFMPEG.
-file 'file:D:/text2animation/outputs/videos/841986d2131048b9b98e8330a9b60d21/2160p60/partial_movie_files/ParabolaAnimation/1457378895_2387387898_223132457.mp4'
-file 'file:D:/text2animation/outputs/videos/841986d2131048b9b98e8330a9b60d21/2160p60/partial_movie_files/ParabolaAnimation/1993220219_2936450995_2465479457.mp4'
-file 'file:D:/text2animation/outputs/videos/841986d2131048b9b98e8330a9b60d21/2160p60/partial_movie_files/ParabolaAnimation/1993220219_1199205214_508846296.mp4'
-file 'file:D:/text2animation/outputs/videos/841986d2131048b9b98e8330a9b60d21/2160p60/partial_movie_files/ParabolaAnimation/1993220219_2269285458_4243675248.mp4'
-file 'file:D:/text2animation/outputs/videos/841986d2131048b9b98e8330a9b60d21/2160p60/partial_movie_files/ParabolaAnimation/1993220219_2834709167_129303009.mp4'
