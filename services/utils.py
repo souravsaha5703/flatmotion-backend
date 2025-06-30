@@ -24,6 +24,10 @@ def calculate_max_tokens(prompt: str, base: int = 300, max_limit: int = 1000) ->
     else:
         return min(max_limit, 900 + (length // 5))
 
+def generate_chat_name(prompt: str, max_words: int = 5) -> str:
+    words = prompt.strip().split()
+    name = " ".join(words[:max_words])
+    return name.capitalize()
 
 def save_script(script:str) -> Script_data:
     script_id = uuid4().hex

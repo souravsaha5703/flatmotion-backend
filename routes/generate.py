@@ -1,12 +1,14 @@
-from fastapi import APIRouter
+from fastapi import APIRouter,Depends
 from fastapi.responses import JSONResponse
 from models.prompt import PromptRequest
 from models.error_response import ErrorResponse
 from config import client
-from services.utils import save_script,render_video,calculate_max_tokens,cleanup_temp_files
+from services.utils import save_script,render_video,calculate_max_tokens,cleanup_temp_files,generate_chat_name
 from services.validation import validate_prompt
 from dotenv import load_dotenv
-from services.cloudinary_uploader import upload_video_to_cloudinary
+from controllers.cloudinary_uploader import upload_video_to_cloudinary
+from controllers.supabase_controller import get_current_user_id,insert_chat
+from uuid import uuid4
 import os
 
 load_dotenv()
@@ -14,7 +16,7 @@ load_dotenv()
 router = APIRouter()
 
 @router.post("/generate")
-async def generate_animation(req:PromptRequest):
+async def generate_animation(req:PromptRequest,user_id:str = Depends(get_current_user_id)):
     if validate_prompt(req.prompt):
         try:
             completion = client.chat.completions.create(
@@ -41,9 +43,22 @@ async def generate_animation(req:PromptRequest):
                 script_path = save_script(script)
                 rendered_video = render_video(script_path.script_path_final,script_path.script_id_final)
                 video_url = upload_video_to_cloudinary(rendered_video.video_path,rendered_video.video_id)
-                print(video_url)
-                cleanup_temp_files()
-                return video_url
+                new_message_id = uuid4().hex
+                new_chat_name = generate_chat_name(req.prompt)
+                try:
+                    result = insert_chat(new_chat_name,new_message_id,req.prompt,script,video_url,user_id)
+                    return {"message":"chat added","data":result}
+                except Exception as e:
+                    return JSONResponse(
+                        status_code=500,
+                        content=ErrorResponse(
+                            err="Something went wrong",
+                            status_code=500,
+                            message=e
+                        ).model_dump()
+                    )
+                finally:
+                    cleanup_temp_files()
             else:
                 return JSONResponse(
                     status_code=500,
@@ -59,7 +74,7 @@ async def generate_animation(req:PromptRequest):
                 content=ErrorResponse(
                     err="An error occured",
                     status_code=500,
-                    message=f"An error occurred during script generation: {str(e)}"
+                    message=f"An error occurred during script generation: {e}"
                 ).model_dump()
             )
     else:

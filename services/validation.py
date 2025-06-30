@@ -6,7 +6,7 @@ load_dotenv()
 
 allowed_keywords = [
     "animate", "draw", "show", "circle", "square", "move", "rotate",
-    "graph", "function", "plot", "scene", "shape", "transform"
+    "graph", "function", "plot", "scene", "shape", "transform","animation","manim","display"
 ]
 
 irrelevant_keywords = ["weather", "news", "recipe", "joke", "story", "code", "html"]
