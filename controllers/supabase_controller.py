@@ -27,8 +27,6 @@ async def get_current_user_id(request: Request) -> str:
     if not user or not user.user:
         raise HTTPException(status_code=403, detail="Invalid or expired user session")
     
-    print(user.user.id)
-    
     return user.user.id 
 
 def insert_chat(chatName: str, message_id: str, userMessage: str, videoScript: str, videoUrl: str, user_id: str):
@@ -48,3 +46,33 @@ def insert_chat(chatName: str, message_id: str, userMessage: str, videoScript: s
     response = supabase.table("chats").insert(payload).execute()
 
     return response.data
+
+def get_previous_prompts(chat_id:str):
+    existing_messages = supabase.table("chats").select("messages").eq("id",chat_id).single().execute()
+
+    all_messages = existing_messages.data.get("messages",[])
+
+    user_prompts = [msg["userMessage"] for msg in all_messages if "userMessage" in msg]
+
+    return user_prompts
+
+def update_chat(message_id: str, userMessage: str, videoScript: str, videoUrl: str, id: str):
+
+    existing_messages = supabase.table("chats").select("messages").eq("id",id).single().execute()
+
+    all_messages = existing_messages.data.get("messages",[])
+    
+    messageData = Message(
+        id=message_id,
+        userMessage=userMessage,
+        videoScript=videoScript,
+        videoUrl=videoUrl
+    )
+
+    updated_messages = all_messages + [messageData.model_dump()]
+
+    updated_response = supabase.table("chats").update({
+        "messages": updated_messages
+    }).eq("id",id).execute()
+
+    return updated_response.data

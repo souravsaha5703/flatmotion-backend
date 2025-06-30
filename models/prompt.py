@@ -5,3 +5,7 @@ class PromptRequest(BaseModel):
 
 class PromptResponse(BaseModel):
     prompt_res: str
+
+class ModificationRequest(BaseModel):
+    prompt: str
+    chat_id: str

@@ -52,3 +52,28 @@ def validate_prompt(prompt:str = "") -> bool:
         return True
     else:
         return False
+    
+def is_modification_prompt(old_prompt: str, new_prompt: str) -> bool:
+    completion = client.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {
+                "role": "system",
+                "content": (
+                    "You are an assistant that helps determine whether two prompts describe "
+                    "the same animation task. If the second prompt is a slight revision, improvement, "
+                    "or clarification of the first one, classify it as a 'modification'. Otherwise, classify as 'new'. "
+                    "Respond with only 'modification' or 'new'."
+                ),
+            },
+            {
+                "role": "user",
+                "content": f"Previous prompt:\n{old_prompt}\n\nNew prompt:\n{new_prompt}\n\nWhat is this?"
+            },
+        ],
+        temperature=0.0,
+        max_tokens=10,
+    )
+
+    result = completion.choices[0].message.content.strip().lower()
+    return result == "modification"
