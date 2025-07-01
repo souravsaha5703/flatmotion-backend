@@ -9,3 +9,6 @@ class PromptResponse(BaseModel):
 class ModificationRequest(BaseModel):
     prompt: str
     chat_id: str
+
+class RequestID(BaseModel):
+    chatId: str

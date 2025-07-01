@@ -76,3 +76,8 @@ def update_chat(message_id: str, userMessage: str, videoScript: str, videoUrl: s
     }).eq("id",id).execute()
 
     return updated_response.data
+
+def get_chats(chat_id:str):
+    response = supabase.table("chats").select("messages").eq("id",chat_id).execute()
+
+    return response.data
