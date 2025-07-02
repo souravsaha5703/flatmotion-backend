@@ -1,13 +1,13 @@
 from fastapi import APIRouter,Depends
 from fastapi.responses import JSONResponse
-from models.prompt import PromptRequest,ModificationRequest,RequestID
+from models.prompt import PromptRequest,ModificationRequest
 from models.error_response import ErrorResponse
 from config import client
 from services.utils import save_script,render_video,calculate_max_tokens,cleanup_temp_files,generate_chat_name
 from services.validation import validate_prompt
 from dotenv import load_dotenv
 from controllers.cloudinary_uploader import upload_video_to_cloudinary
-from controllers.supabase_controller import get_current_user_id,insert_chat,get_previous_prompts,update_chat,get_chats
+from controllers.supabase_controller import get_current_user_id,insert_chat,get_previous_prompts,update_chat,get_chats,get_all_chats
 from uuid import uuid4
 import os
 
@@ -47,14 +47,14 @@ async def generate_animation(req:PromptRequest,user_id:str = Depends(get_current
                 new_chat_name = generate_chat_name(req.prompt)
                 try:
                     result = insert_chat(new_chat_name,new_message_id,req.prompt,script,video_url,user_id)
-                    return {"message":"chat added","data":result}
+                    return {"message":"Chat added successfully","data":result}
                 except Exception as e:
                     return JSONResponse(
                         status_code=500,
                         content=ErrorResponse(
                             err="Something went wrong",
                             status_code=500,
-                            message=e
+                            message=str(e)
                         ).model_dump()
                     )
                 finally:
@@ -121,14 +121,14 @@ async def modify_generated_animation(req:ModificationRequest,user_id:str = Depen
                 new_message_id = uuid4().hex
                 try:
                     result = update_chat(new_message_id, req.prompt, script, video_url, req.chat_id)
-                    return {"message":"chat added","data":result}
+                    return {"message":"Message modified successfully","data":result}
                 except Exception as e:
                     return JSONResponse(
                         status_code=500,
                         content=ErrorResponse(
                             err="Something went wrong",
                             status_code=500,
-                            message=e
+                            message=str(e)
                         ).model_dump()
                     )
                 finally:
@@ -156,13 +156,28 @@ async def modify_generated_animation(req:ModificationRequest,user_id:str = Depen
 async def get_messages(chatId:str,user_id:str = Depends(get_current_user_id)):
     try:
         result = get_chats(chatId)
-        return {"message":"chat added","data":result}
+        return {"message":"Chats fetched successfully","data":result}
     except Exception as e:
         return JSONResponse(
             status_code=400,
             content=ErrorResponse(
                 err="Error in getting messages",
                 status_code=400,
-                message=e
+                message=str(e)
+            ).model_dump()
+        )
+    
+@router.get("/get_all_chats")
+async def get_all_chats(user_id:str = Depends(get_current_user_id)):
+    try:
+        result = get_all_chats(user_id)
+        return {"message":"All chats fetched successfully","data":result}
+    except Exception as e:
+        return JSONResponse(
+            status_code=400,
+            content=ErrorResponse(
+                err="Error in getting messages",
+                status_code=400,
+                message=str(e)
             ).model_dump()
         )
