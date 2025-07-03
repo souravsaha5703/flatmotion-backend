@@ -2,6 +2,7 @@ from supabase_config import supabase
 from pydantic import BaseModel
 from typing import List
 from fastapi import Request,HTTPException
+import asyncio
 
 class Message(BaseModel):
     id: str
@@ -29,7 +30,7 @@ async def get_current_user_id(request: Request) -> str:
     
     return user.user.id 
 
-def insert_chat(chatName: str, message_id: str, userMessage: str, videoScript: str, videoUrl: str, user_id: str):
+async def insert_chat(chatName: str, message_id: str, userMessage: str, videoScript: str, videoUrl: str, user_id: str):
     messageData = Message(
         id=message_id,
         userMessage=userMessage,
@@ -43,12 +44,14 @@ def insert_chat(chatName: str, message_id: str, userMessage: str, videoScript: s
         "messages": [messageData.model_dump()]
     }
 
-    response = supabase.table("chats").insert(payload).execute()
+    return await asyncio.to_thread(
+        lambda: supabase.table("chats").insert(payload).execute().data
+    )
 
-    return response.data
-
-def get_previous_prompts(chat_id:str):
-    existing_messages = supabase.table("chats").select("messages").eq("id",chat_id).single().execute()
+async def get_previous_prompts(chat_id:str):
+    existing_messages = await asyncio.to_thread(
+        lambda: supabase.table("chats").select("messages").eq("id",chat_id).single().execute()
+    )
 
     all_messages = existing_messages.data.get("messages",[])
 
@@ -56,9 +59,11 @@ def get_previous_prompts(chat_id:str):
 
     return user_prompts
 
-def update_chat(message_id: str, userMessage: str, videoScript: str, videoUrl: str, id: str):
+async def update_chat(message_id: str, userMessage: str, videoScript: str, videoUrl: str, id: str):
 
-    existing_messages = supabase.table("chats").select("messages").eq("id",id).single().execute()
+    existing_messages = await asyncio.to_thread(
+        lambda: supabase.table("chats").select("messages").eq("id",id).single().execute()
+    )
 
     all_messages = existing_messages.data.get("messages",[])
     
@@ -71,18 +76,22 @@ def update_chat(message_id: str, userMessage: str, videoScript: str, videoUrl: s
 
     updated_messages = all_messages + [messageData.model_dump()]
 
-    updated_response = supabase.table("chats").update({
-        "messages": updated_messages
-    }).eq("id",id).execute()
+    updated_response = await asyncio.to_thread(
+        lambda: supabase.table("chats").update({"messages": updated_messages}).eq("id",id).execute()
+    )
 
     return updated_response.data
 
-def get_all_chats(user_id:str):
-    response = supabase.table("chats").select("*").eq("user_id",user_id).execute()
+async def get_all_chats(user_id:str):
+    response = await asyncio.to_thread(
+        lambda: supabase.table("chats").select("*").eq("user_id",user_id).execute()
+    )
 
     return response.data
 
-def get_chats(chat_id:str):
-    response = supabase.table("chats").select("messages").eq("id",chat_id).execute()
+async def get_messages(chat_id:str):
+    response = await asyncio.to_thread(
+        lambda: supabase.table("chats").select("messages").eq("id",chat_id).execute()
+    )
 
     return response.data
