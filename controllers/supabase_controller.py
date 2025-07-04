@@ -1,7 +1,7 @@
 from supabase_config import supabase
 from pydantic import BaseModel
 from typing import List
-from fastapi import Request,HTTPException
+from fastapi import Request,HTTPException,WebSocket,status
 import asyncio
 
 class Message(BaseModel):
@@ -30,6 +30,18 @@ async def get_current_user_id(request: Request) -> str:
     
     return user.user.id 
 
+async def get_current_user_id_ws(websocket: WebSocket) -> str:
+    token = websocket.query_params.get("token")
+
+    if not token:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Missing token in WebSocket")
+
+    user = supabase.auth.get_user(token)
+    if not user or not user.user:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid or expired WebSocket session")
+    
+    return user.user.id
+ 
 async def insert_chat(chatName: str, message_id: str, userMessage: str, videoScript: str, videoUrl: str, user_id: str):
     messageData = Message(
         id=message_id,
