@@ -107,3 +107,34 @@ async def get_messages(chat_id:str):
     )
 
     return response.data
+
+def create_guest_user(guest_uid:str):
+    payload = {
+        "guest_uid":guest_uid,
+        "credits":5,
+        "is_guest":True
+    }
+
+    return supabase.table("guest_credits").insert(payload).execute().data
+
+def delete_guest_user(id:str):
+    response = supabase.table("guest_credits").delete().eq('id',id).execute()
+
+    return response.data
+
+def update_credits(id:str):
+    guest_data = supabase.table("guest_credits").select("credits").eq("id",id).single().execute()
+
+    if not guest_data.data:
+        raise HTTPException(status_code=404, detail="Guest not found")
+    
+    credits = guest_data.data["credits"]
+    if credits <= 0:
+        raise HTTPException(status_code=403, detail="No credits left. Please sign up to continue.")
+    
+    updated = supabase.table("guest_credits").update({"credits": credits - 1}).eq("id", id).execute()
+
+    if updated.error:
+        raise HTTPException(status_code=500, detail="Failed to update credits")
+    
+    return updated.data
