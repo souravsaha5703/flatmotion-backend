@@ -133,8 +133,5 @@ def update_credits(id:str):
         raise HTTPException(status_code=403, detail="No credits left. Please sign up to continue.")
     
     updated = supabase.table("guest_credits").update({"credits": credits - 1}).eq("id", id).execute()
-
-    if updated.error:
-        raise HTTPException(status_code=500, detail="Failed to update credits")
     
     return updated.data
