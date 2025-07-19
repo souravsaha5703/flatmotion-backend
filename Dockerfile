@@ -1,5 +1,4 @@
 # Use a Python 3.12 image based on Debian Bullseye (Debian 11)
-# This aligns with your local Python version and ensures compatibility for all Python packages.
 FROM python:3.12-slim-bullseye
 
 # Set environment variable to prevent interactive prompts during apt-get
@@ -9,6 +8,9 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV LANG C.UTF-8
 
 # Install system-level dependencies:
+# - build-essential: Provides compilers (gcc) and development tools needed for C extensions.
+# - libcairo2-dev: Development files for Cairo graphics library, required by pycairo.
+# - pkg-config: Helper tool for finding libraries, often used by build systems.
 # - locales, locales-all: For proper locale support, crucial for texlive.
 # - fontconfig: Often needed for font rendering (LaTeX).
 # - ghostscript: Common dependency for PDF/image processing.
@@ -16,6 +18,9 @@ ENV LANG C.UTF-8
 # - --no-install-recommends: Crucial to keep the installation as minimal as possible.
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
+    build-essential \
+    libcairo2-dev \
+    pkg-config \
     locales \
     locales-all \
     fontconfig \
