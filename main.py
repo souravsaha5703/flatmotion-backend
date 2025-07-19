@@ -21,11 +21,22 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-VIDEO_OUTPUT_DIR = "outputs/videos"
+OUTPUT_BASE_DIR = "outputs"
 
-if not os.path.exists(VIDEO_OUTPUT_DIR):
-    os.makedirs(VIDEO_OUTPUT_DIR, exist_ok=True)
-    print(f"Created directory: {VIDEO_OUTPUT_DIR}")
+VIDEO_OUTPUT_DIR = os.path.join(OUTPUT_BASE_DIR, "videos")
+IMAGES_OUTPUT_DIR = os.path.join(OUTPUT_BASE_DIR, "images")
+SCRIPTS_OUTPUT_DIR = os.path.join(OUTPUT_BASE_DIR, "scripts")
+TEX_OUTPUT_DIR = os.path.join(OUTPUT_BASE_DIR, "Tex")
+TEXTS_OUTPUT_DIR = os.path.join(OUTPUT_BASE_DIR, "texts")
+
+if not os.path.exists(OUTPUT_BASE_DIR):
+    os.makedirs(OUTPUT_BASE_DIR, exist_ok=True)
+    print(f"Created base directory: {OUTPUT_BASE_DIR}")
+
+for directory in [VIDEO_OUTPUT_DIR, IMAGES_OUTPUT_DIR, SCRIPTS_OUTPUT_DIR, TEX_OUTPUT_DIR, TEXTS_OUTPUT_DIR]:
+    if not os.path.exists(directory):
+        os.makedirs(directory, exist_ok=True)
+        print(f"Created subdirectory: {directory}")
 
 app.mount("/videos",StaticFiles(directory=VIDEO_OUTPUT_DIR),name="videos")
 
