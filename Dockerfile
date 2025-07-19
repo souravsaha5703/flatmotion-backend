@@ -8,6 +8,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV LANG C.UTF-8
 
 # Install system-level dependencies:
+# - ffmpeg: Included for video processing, potentially used by Manim.
 # - build-essential: Provides compilers (gcc) and development tools needed for C extensions.
 # - pkg-config: Helper tool for finding libraries.
 # - locales, locales-all: For proper locale support.
@@ -20,6 +21,7 @@ ENV LANG C.UTF-8
 # - --no-install-recommends: Crucial to keep the installation as minimal as possible.
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
+    ffmpeg \
     build-essential \
     pkg-config \
     locales \
@@ -51,7 +53,6 @@ COPY . .
 EXPOSE 8000
 
 # Command to run your application using Uvicorn.
-# Changed to 'shell form' to allow $PORT environment variable expansion.
 # Render injects a 'PORT' environment variable that your service must bind to.
 # `main:app` assumes your FastAPI instance is named `app` in `main.py`.
 # Adjust `main:app` if your app is located elsewhere (e.g., `src.api.server:fastapi_app`).
