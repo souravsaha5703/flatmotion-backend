@@ -1,25 +1,32 @@
-# Use a Python base image with a Debian/Ubuntu foundation for apt-get
-FROM python:3.9-slim-buster
+# Use a Python 3.9 image based on Debian Bullseye (Debian 11)
+FROM python:3.9-slim-bullseye
 
 # Set environment variable to prevent interactive prompts during apt-get
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install system-level dependencies: ffmpeg and a more basic set of texlive packages
-# Clean up apt caches to reduce image size to optimize build time and storage
+# Set a default locale, often required for texlive to function correctly
+ENV LANG C.UTF-8
+
+# Install system-level dependencies:
+# - locales, locales-all: For proper locale support, crucial for texlive.
+# - fontconfig: Often needed for font rendering (LaTeX).
+# - ghostscript: Common dependency for PDF/image processing.
+# - texlive-latex-base: Provides pdflatex, the core LaTeX compiler Manim needs.
+# - --no-install-recommends: Crucial to keep the installation as minimal as possible.
 RUN apt-get update && \
-    apt-get install -y ffmpeg \
-    texlive-latex-base \
-    texlive-fonts-recommended \
-    texlive-latex-recommended \
-    texlive-luatex && \
+    apt-get install -y --no-install-recommends \
+    locales \
+    locales-all \
+    fontconfig \
+    ghostscript \
+    texlive-latex-base && \
+    apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 # Set the working directory inside the container
 WORKDIR /app
 
 # Copy only the requirements file first to leverage Docker cache
-# This means if only your code changes, but requirements.txt doesn't,
-# Docker won't re-run the pip install step, speeding up builds.
 COPY requirements.txt .
 
 # Install Python dependencies from requirements.txt
@@ -29,7 +36,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Declare the port your application will listen on.
-# Render will automatically map its external port to this internal port.
 EXPOSE 8000
 
 # Command to run your application using Uvicorn.
