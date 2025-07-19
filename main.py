@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from routes.generate import router
 from routes.guest import guest_router
+import os
 
 app = FastAPI(title="Text2Animation")
 
@@ -20,7 +21,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.mount("/videos",StaticFiles(directory="outputs/videos"),name="videos")
+VIDEO_OUTPUT_DIR = "outputs/videos"
+
+if not os.path.exists(VIDEO_OUTPUT_DIR):
+    os.makedirs(VIDEO_OUTPUT_DIR, exist_ok=True)
+    print(f"Created directory: {VIDEO_OUTPUT_DIR}")
+
+app.mount("/videos",StaticFiles(directory=VIDEO_OUTPUT_DIR),name="videos")
 
 app.include_router(router,prefix="/api")
 app.include_router(guest_router,prefix="/api")
