@@ -51,8 +51,9 @@ COPY . .
 EXPOSE 8000
 
 # Command to run your application using Uvicorn.
+# Changed to 'shell form' to allow $PORT environment variable expansion.
 # Render injects a 'PORT' environment variable that your service must bind to.
 # `main:app` assumes your FastAPI instance is named `app` in `main.py`.
 # Adjust `main:app` if your app is located elsewhere (e.g., `src.api.server:fastapi_app`).
 # `--host 0.0.0.0` is crucial for Uvicorn to listen on all network interfaces inside the container.
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "$PORT"]
+CMD uvicorn main:app --host 0.0.0.0 --port $PORT
