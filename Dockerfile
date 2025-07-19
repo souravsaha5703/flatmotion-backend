@@ -4,17 +4,13 @@ FROM python:3.9-slim-buster
 # Set environment variable to prevent interactive prompts during apt-get
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install system-level dependencies: ffmpeg and texlive packages
+# Install system-level dependencies: ffmpeg and a more basic set of texlive packages
 # Clean up apt caches to reduce image size to optimize build time and storage
 RUN apt-get update && \
     apt-get install -y ffmpeg \
     texlive-latex-base \
-    texlive-latex-extra \
     texlive-fonts-recommended \
-    texlive-fonts-extra \
     texlive-latex-recommended \
-    texlive-pictures \
-    texlive-science \
     texlive-luatex && \
     rm -rf /var/lib/apt/lists/*
 
