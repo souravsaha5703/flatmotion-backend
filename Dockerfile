@@ -1,5 +1,6 @@
-# Use a Python 3.9 image based on Debian Bullseye (Debian 11)
-FROM python:3.9-slim-bullseye
+# Use a Python 3.12 image based on Debian Bullseye (Debian 11)
+# This aligns with your local Python version and ensures compatibility for all Python packages.
+FROM python:3.12-slim-bullseye
 
 # Set environment variable to prevent interactive prompts during apt-get
 ENV DEBIAN_FRONTEND=noninteractive
