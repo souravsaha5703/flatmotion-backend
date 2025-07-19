@@ -9,23 +9,29 @@ ENV LANG C.UTF-8
 
 # Install system-level dependencies:
 # - build-essential: Provides compilers (gcc) and development tools needed for C extensions.
-# - libcairo2-dev: Development files for Cairo graphics library, required by pycairo.
-# - pkg-config: Helper tool for finding libraries, often used by build systems.
-# - locales, locales-all: For proper locale support, crucial for texlive.
-# - fontconfig: Often needed for font rendering (LaTeX).
-# - ghostscript: Common dependency for PDF/image processing.
-# - texlive-latex-base: Provides pdflatex, the core LaTeX compiler Manim needs.
+# - pkg-config: Helper tool for finding libraries.
+# - locales, locales-all: For proper locale support.
+# - fontconfig: For font rendering.
+# - ghostscript: For PDF/image processing.
+# - texlive-latex-base: Core LaTeX compiler for Manim.
+# - libcairo2-dev: Development files for Cairo graphics library.
+# - libpango-1.0-0, libpangocairo-1.0-0, libpango1.0-dev: Pango and PangoCairo libraries for text rendering.
+# - libgirepository1.0-dev: Often needed for GObject introspection, a dependency for some graphical libraries.
 # - --no-install-recommends: Crucial to keep the installation as minimal as possible.
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     build-essential \
-    libcairo2-dev \
     pkg-config \
     locales \
     locales-all \
     fontconfig \
     ghostscript \
-    texlive-latex-base && \
+    texlive-latex-base \
+    libcairo2-dev \
+    libpango-1.0-0 \
+    libpangocairo-1.0-0 \
+    libpango1.0-dev \
+    libgirepository1.0-dev && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
