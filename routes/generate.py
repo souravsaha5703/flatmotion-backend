@@ -17,6 +17,10 @@ router = APIRouter()
 
 active_connections = {}
 
+@router.get("/health", tags=["Health Check"])
+async def health_check():
+    return {"status": "ok", "message": "Flatmotion Backend is healthy!"}
+
 @router.post("/generate")
 async def generate_animation(req:PromptRequest,user_id:str = Depends(get_current_user_id)):
     if validate_prompt(req.prompt):
